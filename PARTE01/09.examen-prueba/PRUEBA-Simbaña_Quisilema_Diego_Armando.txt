@@ -1,0 +1,63 @@
+
+Nombre: Simbaña_Quisilema_Diego_Armando
+
+Examen de prueba SQL
+Getafe 17 de febrero de 2026
+
+
+******************************************************* Pregunta 1
+
+
+select empno , ename,mgr from emp where mgr in 
+(select empno from emp where mgr in (select empno from emp where mgr is null ))
+order by empno;
+
+
+******************************************************* Pregunta 2
+
+select e.empno, e.ename , e.job , d.loc 
+  from emp e
+  inner join dept d
+  on e.deptno = d.deptno
+  where d.loc in ('DALLAS','CHICAGO')
+  order by d.loc, e.empno;
+
+
+
+******************************************************* Pregunta 3
+
+
+select au_id , au_fname , au_lname , advance 
+  from authors
+  inner join title_authors using (au_id)
+  inner join royalties using (title_id)
+  group by au_id
+  order by au_id;
+
+
+******************************************************* Pregunta 4
+
+drop table publishers2;
+create table publishers2 as select pub_id,pub_name,state, country from publishers;
+update publishers2 set state = 'OR' where state = 'CA';
+insert into publishers2 values('P05', 'Seix Barral', 'CA', 'Spain');
+select * from publishers2 order by pub_id;
+
+
+
+
+******************************************************* Pregunta 5
+
+select title_id , price,
+  case 
+    when price < 10 then price
+    when (price >= 10 and price <= 20) then (price * 0.9)
+    when (price > 20) then (price * 0.8)
+  end NuevoPrecio
+  from titles 
+  order by title_id;
+desc titles;
+
+
+
+

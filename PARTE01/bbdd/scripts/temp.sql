@@ -1,0 +1,2 @@
+SELECT  pubdate
+  FROM titles

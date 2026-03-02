@@ -1,0 +1,1 @@
+mariadb -t -utraining -ptraining training < $1

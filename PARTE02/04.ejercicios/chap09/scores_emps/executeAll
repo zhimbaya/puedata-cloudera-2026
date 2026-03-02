@@ -1,0 +1,27 @@
+#!/bin/zsh
+
+exec 1> /tmp/out
+exec 2> /tmp/out2
+
+for i in *.sql
+do
+  print $i
+  print $i > /dev/tty
+  print
+  cat $i
+  print
+  impala-shell -quiet -f $i
+  print
+  print '******************************'
+  print
+done
+
+
+hql=22.hql
+print $hql
+print $hql > /dev/tty
+print
+cat $hql
+print
+alias be='beeline -n training -p training --silent=true --showDbInPrompt=true'
+be -f 22.hql

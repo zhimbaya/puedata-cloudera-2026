@@ -1,0 +1,57 @@
+
+Nombre: Simbaña_Quisilema_Diego_Armando
+
+Examen SQL
+Getafe 18 de febrero de 2026
+
+
+******************************************************* Pregunta 1
+
+
+select empno, lower(ename) from emp 
+  where mgr is not null or 
+  mgr not in(select distinct p.empno from emp e
+  join emp p
+  on e.mgr = p.empno )
+  order by empno;
+
+
+******************************************************* Pregunta 2
+
+select title_id as id, title_name, type, sales
+from titles 
+where title_id in (select  title_id from titles where sales In (select min(sales) from titles group by type))
+order by id asc;
+
+
+
+******************************************************* Pregunta 3
+select empno, ename , count(j.empno) - 1 as cambios
+from emp e
+inner join jobhist j using(empno)
+group by j.empno
+order by cambios desc, empno;
+
+
+
+******************************************************* Pregunta 4
+
+
+DROP TABLE IF exists emp2;
+create table emp2 as select empno as id, ename as name,sal, deptno from emp;
+update emp2 set sal = sal * 2 where deptno in (select deptno from dept where dname in ('ACCOUNTING','RESEARCH'));
+select id,name,round(sal,2),deptno from emp2 order by id;
+
+
+
+******************************************************* Pregunta 5
+
+
+select au_fname, au_lname, state, 
+if(state = 'NY','CO', if(state = 'CO','CA',state)) as new_state
+from authors
+where state is not null or state != ''
+order by au_lname;
+
+
+

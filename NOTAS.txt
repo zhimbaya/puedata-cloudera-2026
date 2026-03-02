@@ -1,0 +1,11 @@
+=============EMPEZAMOS=================
+u/W;,=3(
+--------
+\\DESKTOP-NNMCSS5\curso_tardes
+--------
+https://labs.puedata.com
+TR-11965_Ubuntu
+pb6awdp14o
+
+----------------------------------
+./create_populate_tables.sh
