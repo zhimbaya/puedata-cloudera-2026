@@ -1,0 +1,12 @@
+use analyst;
+select * from products;
+
+select prod_id, brand, name, price, AVG(price) OVER (PARTITION BY brand) as avgs, if(price > AVG(price) OVER (PARTITION BY brand), 'true', 'false') from products;
+
+select prod_id, brand, name, price, AVG(price) OVER (PARTITION BY brand order by brand) as avgs, 
+if(price > AVG(price) OVER (PARTITION BY brand), 'TRUE', 'FALSE') from products limit 10;
+
+select prod_id, brand, name, price, AVG(price) OVER (PARTITION BY brand order by brand) as avgs, 
+price > AVG(price) OVER (PARTITION BY brand) from products order by rand() limit 10;
+
+select brand, avg(price) from products group by brand;
