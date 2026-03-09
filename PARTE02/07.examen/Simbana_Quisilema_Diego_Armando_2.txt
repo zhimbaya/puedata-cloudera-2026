@@ -1,0 +1,89 @@
+
+Nombre: Simbana_Quisilema_Diego_Armando
+
+Examen Final Analyst
+Getafe 6 de marzo de 2026
+
+
+******************************************************* Pregunta 1
+
+SELECT empno, ename,  deptno, sal,
+    CASE 
+        WHEN sal = MAX(sal) OVER (PARTITION BY deptno) THEN 'Max'
+        WHEN sal = MIN(sal) OVER (PARTITION BY deptno) THEN 'Min'
+        ELSE '---'
+    END AS min_max
+FROM exam.emp
+ORDER BY deptno, sal, ename;
+
+
+******************************************************* Pregunta 2a
+
+DROP table if exists analyst.workers;
+CREATE EXTERNAL TABLE analyst.workers
+   (name STRING,
+    subordinates ARRAY<STRING>,
+    languages MAP<STRING,INT>,
+    address STRUCT<no:STRING, street:STRING,city:STRING,zip:STRING>)       
+   ROW FORMAT DELIMITED 
+      FIELDS TERMINATED BY ','
+      COLLECTION ITEMS TERMINATED BY ':' 
+      MAP KEYS TERMINATED BY '-'
+   STORED AS TEXTFILE
+   LOCATION '/tmp/workers';
+
+DROP TABLE IF EXISTS analyst.workers_parquet;
+
+CREATE TABLE analyst.workers_parquet
+STORED AS PARQUET
+AS
+SELECT * FROM analyst.workers;
+
+SELECT address from analyst.workers_parquet;
+
+
+
+******************************************************* Pregunta 2b
+
+SELECT w.name, l.key, l.value, w.address.city
+FROM analyst.workers_parquet w
+  LATERAL VIEW explode(w.languages) l AS key, value
+WHERE l.key = 'scala'
+ORDER BY w.name ASC;
+
+******************************************************* Pregunta 3
+
+
+
+******************************************************* Pregunta 4a
+sqoop import \
+-m 1 \
+--connect jdbc:mysql://localhost/analyst_dualcore \
+--username training --password training \
+--fields-terminated-by '+' \
+--warehouse-dir /tmp \
+--columns "supp_id, company, contact, phone" \
+--where "city in('Houston','Los Angeles')" \
+--delete-target-dir \
+--outdir /tmp \
+--table suppliers
+
+
+******************************************************* Pregunta 4b
+
+USE exam ;
+DROP TABLE IF EXISTS suppliers ;
+CREATE EXTERNAL TABLE suppliers (
+id INT,
+company STRING,
+contact STRING,
+phone STRING
+
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '+'
+STORED AS TEXTFILE
+LOCATION '/tmp/suppliers' ;
+SELECT * FROM suppliers ;
+SELECT * FROM suppliers ORDER BY id ;
+

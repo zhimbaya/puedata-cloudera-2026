@@ -1,0 +1,60 @@
+
+Nombre: Simbana_Quisilema_Diego_Armando
+
+Examen Prueba Analyst
+Getafe 4 de marzo de 2026
+
+
+******************************************************* Pregunta 1
+
+SELECT name, test, score, cast(AVG(score) OVER (PARTITION BY test order by test) as DECIMAL(10,2)) as avg, 
+if(score > AVG(score) OVER (PARTITION BY test), 'Above' ,'-----') as 'above?' 
+from exam.test_scores ORDER BY test, score desc;
+
+SELECT name, test, score, cast(AVG(score) OVER (PARTITION BY test order by test)as DECIMAL(10,2)) as avg, 
+if(score > AVG(score) OVER (PARTITION BY test), 'Above' ,if(score < AVG(score) OVER (PARTITION BY test), 'Below' ,'-----')) as 'above?' 
+from exam.test_scores ORDER BY test, score desc;
+
+******************************************************* Pregunta 2
+
+DROP table if exists analyst.customers;
+CREATE EXTERNAL TABLE analyst.customers
+   (cust_id INT,
+    name STRING,
+    phones MAP<STRING, STRING>,
+    address STRUCT<street:STRING, city:STRING,zipcode:STRING>)       
+   ROW FORMAT DELIMITED 
+      FIELDS TERMINATED BY ','
+      COLLECTION ITEMS TERMINATED BY '*' 
+      MAP KEYS TERMINATED BY '/'
+   STORED AS TEXTFILE
+   LOCATION '/tmp/customers';
+   
+--hdfs dfs -put customers.data /tmp/customers
+--select * from analyst.customers;
+
+select name, address.street, address.city, p.type as type, p.number as number
+from analyst.customers LATERAL VIEW 
+explode(phones) p AS type, number 
+order by name, type ;
+
+******************************************************* Pregunta 3
+
+
+
+******************************************************* Pregunta 4a
+
+sqoop import \
+-Dorg.apache.sqoop.splitter.allow_text_splitter=true \
+--connect jdbc:mysql://localhost/analyst_dualcore \
+--username training --password training \
+--fields-terminated-by ':' \
+--warehouse-dir /tmp/employees \
+--table employees \
+--columns "emp_id,fname,lname,city,state" \
+--where "state = 'a' or fname like 'An%" \
+--delete-target-dir \
+--outdir /tmp/sqoop-sources \
+--bindir /tmp/sqoop-bin
+
+******************************************************* Pregunta 4b
