@@ -1,11 +1,15 @@
 =============EMPEZAMOS=================
 u/W;,=3(
---------
+---------------------------------------
 \\DESKTOP-NNMCSS5\curso_tardes
---------
+---------------------------------------
 https://labs.puedata.com
 TR-11965_Ubuntu
 pb6awdp14o
 
-----------------------------------
+---------------------------------------
 ./create_populate_tables.sh
+---------------------------------------
+Descarga de la máquina virtual.
+https://downloads.cloudera.com/demo_vm/virtualbox/cloudera-quickstart-vm-5.13.0-0-virtualbox.zip
+---------------------------------------
