@@ -1,6 +1,0 @@
-#!/bin/zsh
-if [[ $# == 1 ]] ; then
-  mariadb -t -ututorial -ptutorial tutorial < $1
-else
-  mariadb -t -ututorial -ptutorial tutorial
-fi

@@ -1,0 +1,82 @@
+1.- Instalación de VirtualBox.
+https://www.virtualbox.org/
+
+2.- Instalación de la máquina virtual de Cloudera:
+https://www.youtube.com/watch?v=jT1q5YQ2cpw
+https://www.youtube.com/watch?v=HP4g2BU7-xU
+https://www.youtube.com/watch?v=IbTvv2F-0zo
+
+3.- Descarga de la máquina virtual
+https://downloads.cloudera.com/demo_vm/virtualbox/cloudera-quickstart-vm-5.13.0-0-virtualbox.zip
+
+4.- Configuración de la MV
+- Aumentar la RAM a 6GB U 8GB
+- Aumentar a dos núcleos
+- Actualizar los Guests-addtions para compartir ficheros
+- Crear una carpeta compartida: auto y cloudera
+- Dar permisos a la carpeta: sudo usermod -aG vboxsf cloudera
+- Cambiar la hora y fecha
+- Cambiar el idioma del teclado
+
+5.- Reiniciar
+6.- Comprobación de Cloudera
+- http://localhost:7180
+- service cloudera-scm-server status
+- acceder a MySQL: MySQL -uroot -pcloudera
+- ejecutar: sudo /home/cloudera/cloudera-manager --force --express
+- hdfs dfs -ls /
+
+7.- 
+- Importar con Sqoop primero los datos de MySQL a hdfs
+- Crear las tablas con impala en Cloudera
+- Importar los datos de hdfs a las tablas con impala o por el terminal
+- impala-shell -f mi_consulta.hql
+
+8.- En caso de Error
+- Volver a reiniciar
+- Ejecutar: hive, impala, hdfs, sqoop, Yarn en Cloudera manager.
+- Servicio de Yarn en ejecución
+- Dar permisos: sudo -u hdfs hadoop fs -chmod 777 /
+- Deshabilitar: hdfs dfsadmin -safemode leave
+- Ver que esta en off: hdfs dfsadmin -safemode get
+
+9.- Limpiar log y liberar espacio
+- sudo rm -rf /tmp/hadoop-cloudera/*
+- hdfs dfs -expunge
+- sudo truncate -s 0 metrics.log
+- sudo find /var/log -type f -exec sh -c '> "{}"' \;
+- df -h /
+- vaciar: 
+
+Borrar logs:
+/var/lib/cloudera-service-monitor/
+/var/lib/cloudera-host-monitor/
+
+# Eliminar logs rotados (ej: hadoop-hdfs-namenode.log.1, .2, etc)
+sudo find /var/log -type f -name "*.log.[0-9]*" -delete
+sudo find /var/log -type f -name "*.out.[0-9]*" -delete
+sudo find /var/log -type f -name "*.log.*" -delete
+sudo find /var/log -type f -name "*.out.*" -delete
+sudo find /var/log -type f -name "*.gz" -delete
+
+hdfs dfsadmin -report | grep "Present Capacity" -A 3
+# 1. Detenemos los servicios de Cloudera para que suelten los archivos
+sudo service cloudera-scm-agent stop
+sudo service cloudera-scm-server stop
+
+# 2. Borramos las bases de datos de monitoreo (se recrearán vacías al iniciar)
+sudo rm -rf /var/lib/cloudera-service-monitor/*
+sudo rm -rf /var/lib/cloudera-host-monitor/*
+sudo rm -rf /var/lib/cloudera-scm-eventserver/*
+
+# 3. Iniciamos de nuevo
+sudo service cloudera-scm-server start
+sudo service cloudera-scm-agent start
+
+# Vaciar los logs actuales (sin borrar el archivo, solo su contenido)
+# Esto es más seguro que borrar el archivo porque el servicio no se confunde
+sudo find /var/log -type f -name "*.log" -exec sh -c '> "{}"' \;
+sudo find /var/log -type f -name "*.out" -exec sh -c '> "{}"' \;
+==========================================
+
+
